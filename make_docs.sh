@@ -7,7 +7,7 @@ if [[ `git status --porcelain` ]]; then
 fi
 
 # REPO=git@github.com:Blizzard/node-rdkafka.git
-REPO=https://github.com/Blizzard/node-rdkafka.git
+REPO=https://github.com/platformatic/rdkafka.git
 
 git remote add deploy $REPO
 
