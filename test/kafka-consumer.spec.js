@@ -26,8 +26,13 @@ module.exports = {
     'beforeEach': function() {
       client = new KafkaConsumer(defaultConfig, topicConfig);
     },
-    'afterEach': function() {
-      client = null;
+    'afterEach': function(cb) {
+      if (client) {
+        client.disconnect(cb);
+        client = null;
+      } else {
+        cb()
+      }
     },
     'does not modify config and clones it': function () {
       t.deepStrictEqual(defaultConfig, {
@@ -48,36 +53,34 @@ module.exports = {
       t.notEqual(topicConfig, client.topicConfig);
     },
     'does not crash in a worker': function (cb) {
+      this.timeout(10000);
       var consumer = new worker_threads.Worker(
         path.join(__dirname, 'kafka-consumer-worker.js')
       );
 
-      var timeout = setTimeout(function() {
-        consumer.terminate();
-      }, 1000);
-
       consumer.on('message', function(msg) {
-        t.strictEqual(msg.value.toString(), 'my message');
-        consumer.terminate();
+        process._rawDebug('got message');
+        t.strictEqual(Buffer.from(msg.message.value).toString(), 'my message');
       });
 
+      let stream
+
       consumer.on('exit', function(code) {
-        clearTimeout(timeout);
+        process._rawDebug('exiting');
+        stream.end();
         t.strictEqual(code, 0);
         cb();
       });
 
-      consumer.on('online', function() {
-        const stream = KafkaProducer.createWriteStream({
-          'metadata.broker.list': 'localhost:9092',
-          'client.id': 'kafka-mocha-producer',
-          'dr_cb': true
-        }, {}, {
-          topic: 'topic'
-        });
-
-        stream.write(Buffer.from('my message'));
+      stream = KafkaProducer.createWriteStream({
+        'metadata.broker.list': 'localhost:9092',
+        'client.id': 'kafka-mocha-producer',
+        'dr_cb': true
+      }, {}, {
+        topic: 'topic'
       });
+
+      stream.write(Buffer.from('my message'));
     }
   },
 };

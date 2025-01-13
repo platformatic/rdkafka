@@ -10,6 +10,7 @@
 var Producer = require('../lib/producer');
 var t = require('assert');
 var worker_threads = require('worker_threads');
+var path = require('path');
 // var Mock = require('./mock');
 
 var client;
@@ -97,21 +98,19 @@ module.exports = {
         client.disconnect(next);
       },
       'does not crash in a worker': function (cb) {
+        this.timeout(10000);
+
         var producer = new worker_threads.Worker(
           path.join(__dirname, 'producer-worker.js')
         );
 
-        var timeout = setTimeout(function() {
-          producer.terminate();
-        }, 1000);
-
-        consumer.on('message', (report) => {
+        producer.on('message', (report) => {
+          process._rawDebug('got message');
           t.strictEqual(report.topic, 'topic');
-          producer.terminate();
         });
 
         producer.on('exit', function(code) {
-          clearTimeout(timeout);
+          process._rawDebug('exiting');
           t.strictEqual(code, 0);
           cb();
         });

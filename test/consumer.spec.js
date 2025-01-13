@@ -19,8 +19,13 @@ var defaultConfig = {
 
 module.exports = {
   'Consumer': {
-    'afterEach': function() {
-      client = null;
+    'afterEach': function(cb) {
+      if (client) {
+        client.disconnect(cb);
+        client = null;
+      } else {
+        cb()
+      }
     },
     'cannot be set without a topic config': function() {
       t.throws(function() {

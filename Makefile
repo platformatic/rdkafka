@@ -13,7 +13,7 @@ endif
 NODE ?= node
 CPPLINT ?= cpplint.py
 BUILDTYPE ?= Release
-TESTS = "test/**/*.js"
+TESTS = "test/**/*.spec.js"
 E2E_TESTS = $(wildcard e2e/*.spec.js)
 TEST_REPORTER =
 TEST_OUTPUT =

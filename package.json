@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "scripts": {
     "configure": "node-gyp configure",
-    "build": "node-gyp build",
+    "build": "node-gyp build --debug",
     "test": "make test",
     "install": "node-gyp rebuild",
     "prepack": "node ./ci/prepublish.js"
