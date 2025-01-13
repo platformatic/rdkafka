@@ -1,17 +1,11 @@
-node-rdkafka - Node.js wrapper for Kafka C/C++ library
+@platformatic/rdkafka - Node.js wrapper for Kafka C/C++ library
 ==============================================
 
-Copyright (c) 2016 Blizzard Entertainment.
+[https://github.com/platformatic/rdkafka](https://github.com/platformatic/rdkafka)
 
-[https://github.com/blizzard/node-rdkafka](https://github.com/blizzard/node-rdkafka)
+[![Build Status](https://github.com/platformatic/rdkafka/actions/workflows/test.yml/badge.svg)](https://github.com/platformatic/rdkafka/actions/workflows/test.yml)
 
-[![Build Status](https://github.com/Blizzard/node-rdkafka/actions/workflows/test.yml/badge.svg)](https://github.com/Blizzard/node-rdkafka/actions/workflows/test.yml)
-
-[![npm version](https://badge.fury.io/js/node-rdkafka.svg)](https://badge.fury.io/js/node-rdkafka)
-
-# Looking for Collaborators!
-
-I am looking for *your* help to make this project even better! If you're interested, check [this out](https://github.com/Blizzard/node-rdkafka/issues/628)
+This project was forked from the great [https://github.com/blizzard/node-rdkafka](https://github.com/blizzard/node-rdkafka) at commit a950a56a43d679176209b43ed3e5817d0c1097ac.
 
 # Overview
 
@@ -25,7 +19,7 @@ To view the reference docs for the current version, go [here](https://blizzard.g
 
 ## Contributing
 
-For guidelines on contributing please see [CONTRIBUTING.md](https://github.com/blizzard/node-rdkafka/blob/master/CONTRIBUTING.md)
+For guidelines on contributing please see [CONTRIBUTING.md](https://github.com/platformatic/rdkafka/blob/master/CONTRIBUTING.md)
 
 ## Code of Conduct
 
@@ -56,7 +50,7 @@ __NOTE:__ From the `librdkafka` docs
 
 ### Alpine
 
-Using Alpine Linux? Check out the [docs](https://github.com/Blizzard/node-rdkafka/blob/master/examples/docker-alpine.md).
+Using Alpine Linux? Check out the [docs](https://github.com/platformatic/rdkafka/blob/master/examples/docker-alpine.md).
 
 ### Windows
 
