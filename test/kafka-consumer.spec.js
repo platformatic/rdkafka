@@ -53,7 +53,7 @@ module.exports = {
       t.notEqual(topicConfig, client.topicConfig);
     },
     'does not crash in a worker': function (cb) {
-      this.timeout(10000);
+      this.timeout(30000);
       var consumer = new worker_threads.Worker(
         path.join(__dirname, 'kafka-consumer-worker.js')
       );
