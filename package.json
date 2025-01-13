@@ -40,6 +40,7 @@
     "jshint": "^2.10.1",
     "mocha": "^10.2.0",
     "node-gyp": "^10.1.0",
+    "taffydb": "^2.7.3",
     "toolkit-jsdoc": "^1.0.0"
   },
   "dependencies": {
