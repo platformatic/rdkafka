@@ -8,8 +8,7 @@ if [[ `git status --porcelain` ]]; then
   exit 1
 fi
 
-# REPO=git@github.com:Blizzard/node-rdkafka.git
-REPO=https://github.com/platformatic/rdkafka.git
+REPO=git@github.com:platformatic/rdkafka.git
 
 git remote add deploy $REPO
 
