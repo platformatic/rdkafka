@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 if [[ `git status --porcelain` ]]; then
   # changes
   >&2 echo "You have unstaged changes. Please commit before you run this."
