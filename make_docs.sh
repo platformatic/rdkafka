@@ -10,7 +10,7 @@ fi
 
 REPO=git@github.com:platformatic/rdkafka.git
 
-git remote rm deply || true
+git remote rm deploy || true
 git remote add deploy $REPO
 
 # Get the most recent stuff if we don't have it
