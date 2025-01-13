@@ -1,5 +1,5 @@
 {
-  "name": "node-rdkafka",
+  "name": "@platformatic/rdkafka",
   "version": "v3.2.1",
   "description": "Node.js bindings for librdkafka",
   "librdkafka": "2.6.1",
@@ -17,9 +17,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:Blizzard/node-rdkafka.git"
+    "url": "git@github.com:platformatic/rdkafka.git"
   },
   "contributors": [
+    {
+      "name": "Matteo Collina",
+      "email": "hello@matteocollina.com"
+    },
     {
       "name": "Stephen Parente",
       "email": "webmakersteve@gmail.com"
