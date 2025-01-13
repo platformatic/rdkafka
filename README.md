@@ -28,7 +28,7 @@ Play nice; Play fair.
 ## Requirements
 
 * Apache Kafka >=0.9
-* Node.js >=16
+* Node.js >=20
 * Linux/Mac
 * Windows?! See below
 * OpenSSL
