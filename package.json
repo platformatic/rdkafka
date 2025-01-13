@@ -7,7 +7,7 @@
   "scripts": {
     "configure": "node-gyp configure",
     "build": "node-gyp build --debug",
-    "test": "make test",
+    "test": "make test && make e2e",
     "install": "node-gyp rebuild",
     "prepack": "node ./ci/prepublish.js"
   },
