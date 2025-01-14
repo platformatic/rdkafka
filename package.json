@@ -1,6 +1,6 @@
 {
   "name": "@platformatic/rdkafka",
-  "version": "v3.2.1",
+  "version": "v4.0.0",
   "description": "Node.js bindings for librdkafka",
   "librdkafka": "2.6.1",
   "main": "lib/index.js",
