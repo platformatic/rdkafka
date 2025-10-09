@@ -41,7 +41,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install Node ${{ matrix.node }} in ${{ runner.os }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
           cache: "npm"
