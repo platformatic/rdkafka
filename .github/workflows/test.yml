@@ -37,7 +37,7 @@ jobs:
         options: >-
           --link zookeeper
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - name: Install Node ${{ matrix.node }} in ${{ runner.os }}
