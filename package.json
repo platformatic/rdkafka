@@ -39,7 +39,7 @@
     "jsdoc": "^4.0.2",
     "jshint": "^2.10.1",
     "mocha": "^10.2.0",
-    "node-gyp": "^10.1.0",
+    "node-gyp": "^12.0.0",
     "taffydb": "^2.7.3",
     "toolkit-jsdoc": "^1.0.0"
   },
