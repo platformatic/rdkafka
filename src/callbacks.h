@@ -42,7 +42,7 @@ class Dispatcher {
   void Deactivate();
 
  protected:
-  std::vector<v8::Persistent<v8::Function, v8::CopyablePersistentTraits<v8::Function> > > callbacks;  // NOLINT
+  CopyableFunctionList callbacks;
 
   uv_mutex_t async_lock;
 

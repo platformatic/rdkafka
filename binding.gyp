@@ -43,9 +43,6 @@
                 'action': ['python', '<@(_inputs)']
               }
             ],
-            'cflags_cc' : [
-              '-std=c++17'
-            ],
             'msvs_settings': {
               'VCLinkerTool': {
                 'AdditionalDependencies': [
@@ -122,9 +119,6 @@
               [
                 'OS=="linux"',
                 {
-                  'cflags_cc' : [
-                    '-std=c++17'
-                  ],
                   'cflags_cc!': [
                     '-fno-rtti'
                   ]
@@ -140,8 +134,7 @@
                       '-L/usr/local/opt/openssl/lib'
                     ],
                     'OTHER_CPLUSPLUSFLAGS': [
-                      '-I/usr/local/opt/openssl/include',
-                      '-std=c++17'
+                      '-I/usr/local/opt/openssl/include'
                     ],
                   },
                 }
