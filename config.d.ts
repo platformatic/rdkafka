@@ -1,4 +1,4 @@
-// ====== Generated from librdkafka 2.6.1 file CONFIGURATION.md ======
+// ====== Generated from librdkafka 2.12.0 file CONFIGURATION.md ======
 // Code that generated this is a derivative work of the code from Nam Nguyen
 // https://gist.github.com/ntgn81/066c2c8ec5b4238f85d1e9168a04e3fb
 
@@ -61,6 +61,20 @@ export interface GlobalConfig {
      * @default 1000000
      */
     "max.in.flight"?: number;
+
+    /**
+     * Controls how the client recovers when none of the brokers known to it is available. If set to `none`, the client doesn't re-bootstrap. If set to `rebootstrap`, the client repeats the bootstrap process using `bootstrap.servers` and brokers added through `rd_kafka_brokers_add()`. Rebootstrapping is useful when a client communicates with brokers so infrequently that the set of brokers may change entirely before the client refreshes metadata. Metadata recovery is triggered when all last-known brokers appear unavailable simultaneously or the client cannot refresh metadata within `metadata.recovery.rebootstrap.trigger.ms` or it's requested in a metadata response.
+     *
+     * @default rebootstrap
+     */
+    "metadata.recovery.strategy"?: 'none' | 'rebootstrap';
+
+    /**
+     * If a client configured to rebootstrap using `metadata.recovery.strategy=rebootstrap` is unable to obtain metadata from any of the brokers for this interval, client repeats the bootstrap process using `bootstrap.servers` configuration and brokers added through `rd_kafka_brokers_add()`.
+     *
+     * @default 300000
+     */
+    "metadata.recovery.rebootstrap.trigger.ms"?: number;
 
     /**
      * Period of time in milliseconds at which topic and broker metadata is refreshed in order to proactively discover any new brokers, topics, partitions or partition leader changes. Use -1 to disable the intervalled refresh (not recommended). If there are no locally referenced topics (no topic objects created, no messages produced, no subscription or no assignment) then only the broker list will be refreshed every interval but no more often than every 10s.
@@ -152,7 +166,7 @@ export interface GlobalConfig {
     /**
      * Disable the Nagle algorithm (TCP_NODELAY) on broker sockets.
      *
-     * @default false
+     * @default true
      */
     "socket.nagle.disable"?: boolean;
 
@@ -185,7 +199,7 @@ export interface GlobalConfig {
     "socket.connection.setup.timeout.ms"?: number;
 
     /**
-     * Close broker connections after the specified time of inactivity. Disable with 0. If this property is left at its default value some heuristics are performed to determine a suitable default value, this is currently limited to identifying brokers on Azure (see librdkafka issue #3109 for more info).
+     * Close broker connections after the specified time of inactivity. Disable with 0. If this property is left at its default value some heuristics are performed to determine a suitable default value, this is currently limited to identifying brokers on Azure (see librdkafka issue #3109 for more info). Actual value can be lower, up to 2s lower, only if `connections.max.idle.ms` >= 4s, as jitter is added to avoid disconnecting all brokers at the same time.
      *
      * @default 0
      */
@@ -329,7 +343,7 @@ export interface GlobalConfig {
     "internal.termination.signal"?: number;
 
     /**
-     * Request broker's supported API versions to adjust functionality to available protocol features. If set to false, or the ApiVersionRequest fails, the fallback version `broker.version.fallback` will be used. **NOTE**: Depends on broker version >=0.10.0. If the request is not supported by (an older) broker the `broker.version.fallback` fallback is used.
+     * **DEPRECATED** **Post-deprecation actions: remove this configuration property, brokers < 0.10.0 won't be supported anymore in librdkafka 3.x.** Request broker's supported API versions to adjust functionality to available protocol features. If set to false, or the ApiVersionRequest fails, the fallback version `broker.version.fallback` will be used. **NOTE**: Depends on broker version >=0.10.0. If the request is not supported by (an older) broker the `broker.version.fallback` fallback is used.
      *
      * @default true
      */
@@ -343,14 +357,14 @@ export interface GlobalConfig {
     "api.version.request.timeout.ms"?: number;
 
     /**
-     * Dictates how long the `broker.version.fallback` fallback is used in the case the ApiVersionRequest fails. **NOTE**: The ApiVersionRequest is only issued when a new connection to the broker is made (such as after an upgrade).
+     * **DEPRECATED** **Post-deprecation actions: remove this configuration property, brokers < 0.10.0 won't be supported anymore in librdkafka 3.x.** Dictates how long the `broker.version.fallback` fallback is used in the case the ApiVersionRequest fails. **NOTE**: The ApiVersionRequest is only issued when a new connection to the broker is made (such as after an upgrade).
      *
      * @default 0
      */
     "api.version.fallback.ms"?: number;
 
     /**
-     * Older broker versions (before 0.10.0) provide no way for a client to query for supported protocol features (ApiVersionRequest, see `api.version.request`) making it impossible for the client to know what features it may use. As a workaround a user may set this property to the expected broker version and the client will automatically adjust its feature set accordingly if the ApiVersionRequest fails (or is disabled). The fallback broker version will be used for `api.version.fallback.ms`. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value >= 0.10, such as 0.10.2.1, enables ApiVersionRequests.
+     * **DEPRECATED** **Post-deprecation actions: remove this configuration property, brokers < 0.10.0 won't be supported anymore in librdkafka 3.x.** Older broker versions (before 0.10.0) provide no way for a client to query for supported protocol features (ApiVersionRequest, see `api.version.request`) making it impossible for the client to know what features it may use. As a workaround a user may set this property to the expected broker version and the client will automatically adjust its feature set accordingly if the ApiVersionRequest fails (or is disabled). The fallback broker version will be used for `api.version.fallback.ms`. Valid values are: 0.9.0, 0.8.2, 0.8.1, 0.8.0. Any other value >= 0.10, such as 0.10.2.1, enables ApiVersionRequests.
      *
      * @default 0.10.0
      */
@@ -424,6 +438,16 @@ export interface GlobalConfig {
      * File or directory path to CA certificate(s) for verifying the broker's key. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX this configuration defaults to `probe`. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package. If OpenSSL is statically linked or `ssl.ca.location` is set to `probe` a list of standard paths will be probed and the first one found will be used as the default CA certificate location path. If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see `OPENSSLDIR` in `openssl version -a`).
      */
     "ssl.ca.location"?: string;
+
+    /**
+     * File or directory path to CA certificate(s) for verifying HTTPS endpoints, like `sasl.oauthbearer.token.endpoint.url` used for OAUTHBEARER/OIDC authentication. Mutually exclusive with `https.ca.pem`. Defaults: On Windows the system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX this configuration defaults to `probe`. It is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the distribution's ca-certificates package. If OpenSSL is statically linked or `https.ca.location` is set to `probe` a list of standard paths will be probed and the first one found will be used as the default CA certificate location path. If OpenSSL is dynamically linked the OpenSSL library's default path will be used (see `OPENSSLDIR` in `openssl version -a`).
+     */
+    "https.ca.location"?: string;
+
+    /**
+     * CA certificate string (PEM format) for verifying HTTPS endpoints. Mutually exclusive with `https.ca.location`. Optional: see `https.ca.location`.
+     */
+    "https.ca.pem"?: string;
 
     /**
      * CA certificate string (PEM format) for verifying the broker's key.
@@ -585,6 +609,16 @@ export interface GlobalConfig {
     "sasl.oauthbearer.client.id"?: string;
 
     /**
+     * Alias for `sasl.oauthbearer.client.id`: Public identifier for the application. Must be unique across all clients that the authorization server handles. Only used when `sasl.oauthbearer.method` is set to "oidc".
+     */
+    "sasl.oauthbearer.client.credentials.client.id"?: string;
+
+    /**
+     * Alias for `sasl.oauthbearer.client.secret`: Client secret only known to the application and the authorization server. This should be a sufficiently random string that is not guessable. Only used when `sasl.oauthbearer.method` is set to "oidc".
+     */
+    "sasl.oauthbearer.client.credentials.client.secret"?: string;
+
+    /**
      * Client secret only known to the application and the authorization server. This should be a sufficiently random string that is not guessable. Only used when `sasl.oauthbearer.method` is set to "oidc".
      */
     "sasl.oauthbearer.client.secret"?: string;
@@ -603,6 +637,88 @@ export interface GlobalConfig {
      * OAuth/OIDC issuer token endpoint HTTP(S) URI used to retrieve token. Only used when `sasl.oauthbearer.method` is set to "oidc".
      */
     "sasl.oauthbearer.token.endpoint.url"?: string;
+
+    /**
+     * OAuth grant type to use when communicating with the identity provider.
+     *
+     * @default client_credentials
+     */
+    "sasl.oauthbearer.grant.type"?: 'client_credentials' | 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+
+    /**
+     * Algorithm the client should use to sign the assertion sent to the identity provider and in the OAuth alg header in the JWT assertion.
+     *
+     * @default RS256
+     */
+    "sasl.oauthbearer.assertion.algorithm"?: 'RS256' | 'ES256';
+
+    /**
+     * Path to client's private key (PEM) used for authentication when using the JWT assertion.
+     */
+    "sasl.oauthbearer.assertion.private.key.file"?: string;
+
+    /**
+     * Private key passphrase for `sasl.oauthbearer.assertion.private.key.file` or `sasl.oauthbearer.assertion.private.key.pem`.
+     */
+    "sasl.oauthbearer.assertion.private.key.passphrase"?: string;
+
+    /**
+     * Client's private key (PEM) used for authentication when using the JWT assertion.
+     */
+    "sasl.oauthbearer.assertion.private.key.pem"?: string;
+
+    /**
+     * Path to the assertion file. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     */
+    "sasl.oauthbearer.assertion.file"?: string;
+
+    /**
+     * JWT audience claim. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     */
+    "sasl.oauthbearer.assertion.claim.aud"?: string;
+
+    /**
+     * Assertion expiration time in seconds. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     *
+     * @default 300
+     */
+    "sasl.oauthbearer.assertion.claim.exp.seconds"?: number;
+
+    /**
+     * JWT issuer claim. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     */
+    "sasl.oauthbearer.assertion.claim.iss"?: string;
+
+    /**
+     * JWT ID claim. When set to `true`, a random UUID is generated. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     *
+     * @default false
+     */
+    "sasl.oauthbearer.assertion.claim.jti.include"?: boolean;
+
+    /**
+     * Assertion not before time in seconds. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     *
+     * @default 60
+     */
+    "sasl.oauthbearer.assertion.claim.nbf.seconds"?: number;
+
+    /**
+     * JWT subject claim. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     */
+    "sasl.oauthbearer.assertion.claim.sub"?: string;
+
+    /**
+     * Path to the JWT template file. Only used when `sasl.oauthbearer.method` is set to "oidc" and JWT assertion is needed.
+     */
+    "sasl.oauthbearer.assertion.jwt.template.file"?: string;
+
+    /**
+     * Type of metadata-based authentication to use for OAUTHBEARER/OIDC `azure_imds` authenticates using the Azure IMDS endpoint. Sets a default value for `sasl.oauthbearer.token.endpoint.url` if missing. Configuration values specific of chosen authentication type can be passed through `sasl.oauthbearer.config`.
+     *
+     * @default none
+     */
+    "sasl.oauthbearer.metadata.authentication.type"?: 'none' | 'azure_imds';
 
     /**
      * List of plugin libraries to load (; separated). The library search path is platform dependent (see dlopen(3) for Unix and LoadLibrary() for Windows). If no filename extension is specified the platform-specific extension (such as .dll or .so) will be appended automatically.
@@ -796,28 +912,28 @@ export interface ConsumerGlobalConfig extends GlobalConfig {
     "group.instance.id"?: string;
 
     /**
-     * The name of one or more partition assignment strategies. The elected group leader will use a strategy supported by all members of the group to assign partitions to group members. If there is more than one eligible strategy, preference is determined by the order of this list (strategies earlier in the list have higher priority). Cooperative and non-cooperative (eager) strategies must not be mixed. Available strategies: range, roundrobin, cooperative-sticky.
+     * The name of one or more partition assignment strategies. The elected group leader will use a strategy supported by all members of the group to assign partitions to group members. If there is more than one eligible strategy, preference is determined by the order of this list (strategies earlier in the list have higher priority). Cooperative and non-cooperative (eager)strategies must not be mixed. `partition.assignment.strategy` is not supported for `group.protocol=consumer`. Use `group.remote.assignor` instead. Available strategies: range, roundrobin, cooperative-sticky.
      *
      * @default range,roundrobin
      */
     "partition.assignment.strategy"?: string;
 
     /**
-     * Client group session and failure detection timeout. The consumer sends periodic heartbeats (heartbeat.interval.ms) to indicate its liveness to the broker. If no hearts are received by the broker for a group member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. The allowed range is configured with the **broker** configuration properties `group.min.session.timeout.ms` and `group.max.session.timeout.ms`. Also see `max.poll.interval.ms`.
+     * Client group session and failure detection timeout. The consumer sends periodic heartbeats (heartbeat.interval.ms) to indicate its liveness to the broker. If no hearts are received by the broker for a group member within the session timeout, the broker will remove the consumer from the group and trigger a rebalance. The allowed range is configured with the **broker** configuration properties `group.min.session.timeout.ms` and `group.max.session.timeout.ms`. `session.timeout.ms` is not supported for `group.protocol=consumer`. It is set with the broker configuration property `group.consumer.session.timeout.ms` by default or can be configured through the AdminClient IncrementalAlterConfigs API. The allowed range is configured with the broker configuration properties `group.consumer.min.session.timeout.ms` and `group.consumer.max.session.timeout.ms`. Also see `max.poll.interval.ms`.
      *
      * @default 45000
      */
     "session.timeout.ms"?: number;
 
     /**
-     * Group session keepalive heartbeat interval.
+     * Group session keepalive heartbeat interval. `heartbeat.interval.ms` is not supported for `group.protocol=consumer`. It is set with the broker configuration property `group.consumer.heartbeat.interval.ms` by default or can be configured through the AdminClient IncrementalAlterConfigs API. The allowed range is configured with the broker configuration properties `group.consumer.min.heartbeat.interval.ms` and `group.consumer.max.heartbeat.interval.ms`.
      *
      * @default 3000
      */
     "heartbeat.interval.ms"?: number;
 
     /**
-     * Group protocol type for the `classic` group protocol. NOTE: Currently, the only supported group protocol type is `consumer`.
+     * Group protocol type for the `classic` group protocol. NOTE: Currently, the only supported group protocol type is `consumer`. `group.protocol.type` is not supported for `group.protocol=consumer`
      *
      * @default consumer
      */

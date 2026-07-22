@@ -1,8 +1,8 @@
 {
   "name": "@platformatic/rdkafka",
-  "version": "4.0.1",
+  "version": "v4.1.0",
   "description": "Node.js bindings for librdkafka",
-  "librdkafka": "2.6.1",
+  "librdkafka": "2.12.0",
   "main": "lib/index.js",
   "scripts": {
     "configure": "node-gyp configure",
@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "bindings": "^1.3.1",
-    "nan": "^2.19.0"
+    "nan": "^2.24.0"
   },
   "engines": {
     "node": ">=16"
