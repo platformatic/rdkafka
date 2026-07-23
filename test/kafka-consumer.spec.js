@@ -31,7 +31,7 @@ module.exports = {
         client.disconnect(cb);
         client = null;
       } else {
-        cb()
+        cb();
       }
     },
     'does not modify config and clones it': function () {
@@ -54,30 +54,41 @@ module.exports = {
     },
     'does not crash in a worker': function (cb) {
       this.timeout(30000);
-      var consumer = new worker_threads.Worker(
-        path.join(__dirname, 'kafka-consumer-worker.js')
-      );
-
-      consumer.on('message', function(msg) {
-        process._rawDebug('got message');
-        t.strictEqual(Buffer.from(msg.message.value).toString(), 'my message');
-      });
-
-      let stream
-
-      consumer.on('exit', function(code) {
-        process._rawDebug('exiting');
-        stream.end();
-        t.strictEqual(code, 0);
-        cb();
-      });
-
-      stream = KafkaProducer.createWriteStream({
+      var topic = 'node-rdkafka-worker-' + Date.now();
+      var stream = KafkaProducer.createWriteStream({
         'metadata.broker.list': 'localhost:9092',
         'client.id': 'kafka-mocha-producer',
         'dr_cb': true
       }, {}, {
-        topic: 'topic'
+        topic: topic
+      });
+
+      stream.producer.once('delivery-report', function(err) {
+        if (err) {
+          cb(err);
+          return;
+        }
+
+        var consumer = new worker_threads.Worker(
+          path.join(__dirname, 'kafka-consumer-worker.js'),
+          { workerData: { topic: topic, groupId: topic } }
+        );
+        var timeout = setTimeout(function() {
+          consumer.terminate();
+        }, 25000);
+
+        consumer.on('message', function(msg) {
+          process._rawDebug('got message');
+          t.strictEqual(Buffer.from(msg.message.value).toString(), 'my message');
+        });
+
+        consumer.on('exit', function(code) {
+          process._rawDebug('exiting');
+          clearTimeout(timeout);
+          stream.end();
+          t.strictEqual(code, 0);
+          cb();
+        });
       });
 
       stream.write(Buffer.from('my message'));
