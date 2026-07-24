@@ -52,6 +52,16 @@ jobs:
         run: ./win_install.ps1
       - name: Build
         run: npm ci
+      - name: Test packaged installation
+        if: matrix.node == 20
+        run: |
+          chmod -x configure deps/librdkafka/configure deps/librdkafka/lds-gen.py
+          npm pack
+          for script in configure deps/librdkafka/configure deps/librdkafka/lds-gen.py; do
+            tar -tzvf ./*.tgz | grep -E "^-rwxr-xr-x.*package/$script$"
+          done
+          npm install --prefix /tmp/rdkafka-package-test --foreground-scripts --no-audit --no-fund "$PWD"/platformatic-rdkafka-*.tgz
+          node -e "require('/tmp/rdkafka-package-test/node_modules/@platformatic/rdkafka')"
       # skipping on windows for now due to Make / mocha exit code issues
       - name: Test
         if: runner.os != 'Windows'
