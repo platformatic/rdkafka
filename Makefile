@@ -34,7 +34,7 @@ ifeq ($(BUILDTYPE),Debug)
 GYPBUILDARGS=--debug
 endif
 
-.PHONY: all clean lint test lib docs e2e ghpages check
+.PHONY: all clean lint test lib docs e2e ghpages check check-pack
 
 all: lib test e2e
 
@@ -61,6 +61,9 @@ test: node_modules/.dirstamp
 
 check: node_modules/.dirstamp
 	@$(NODE) util/test-compile.js
+
+check-pack:
+	@$(NODE) ci/checks/tarball-executable-bits.js
 
 e2e: $(E2E_TESTS)
 	@./node_modules/.bin/mocha --exit --timeout 120000 --ui exports $(TEST_REPORTER) $(E2E_TESTS) $(TEST_OUTPUT)

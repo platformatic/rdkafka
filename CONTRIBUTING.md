@@ -235,3 +235,17 @@ Steps to update:
 1. Increment the `version` in `package.json` and merge that change in.
 
 1. Create a new github release. Set the tag & release title to the same string as `version` in `package.json`.
+
+Publishing then happens from the `Release` workflow, which packs and publishes
+with `npm`.
+
+__Do not publish by hand, and do not publish with `pnpm`.__ `pnpm` does not use
+`npm` to build the tarball; it has its own packer, which synthesizes the tar
+entry modes rather than reading them off disk, marking only files listed in
+`bin` as executable. That silently strips the executable bit from `configure`,
+`deps/librdkafka/configure` and `deps/librdkafka/lds-gen.py`, and every clean
+native install of the resulting package then fails with exit 126
+(`Permission denied`). This is what happened to 4.1.0 and 4.1.0-alpha.1.
+
+`node ci/checks/tarball-executable-bits.js` packs the module and asserts the
+bits survived. It runs on every pull request and again before publishing.

@@ -56,3 +56,16 @@ jobs:
       - name: Test
         if: runner.os != 'Windows'
         run: npm test
+
+  pack:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - name: Verify the tarball keeps the executable bit on build scripts
+        run: node ci/checks/tarball-executable-bits.js

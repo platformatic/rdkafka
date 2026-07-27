@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  release:
+    types: ["published"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - name: Verify the tarball keeps the executable bit on build scripts
+        run: node ci/checks/tarball-executable-bits.js
+      # Publish with npm, never pnpm. pnpm's packer synthesizes tar entry modes
+      # and marks only `bin` entries executable, which strips the executable bit
+      # from configure and lds-gen.py and breaks every clean native install.
+      # That is what shipped in 4.1.0; see ci/checks/tarball-executable-bits.js.
+      - name: Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

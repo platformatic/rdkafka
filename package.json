@@ -9,7 +9,8 @@
     "build": "node-gyp build --debug",
     "test": "make test",
     "install": "node-gyp rebuild",
-    "prepack": "node ./ci/prepublish.js"
+    "prepack": "node ./ci/prepublish.js",
+    "prepublishOnly": "node ./ci/checks/publish-with-npm.js"
   },
   "keywords": [
     "kafka",
