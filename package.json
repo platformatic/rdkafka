@@ -1,6 +1,6 @@
 {
   "name": "@platformatic/rdkafka",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Node.js bindings for librdkafka",
   "librdkafka": "2.12.0",
   "main": "lib/index.js",
@@ -50,5 +50,12 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "publishConfig": {
+    "executableFiles": [
+      "configure",
+      "deps/librdkafka/configure",
+      "deps/librdkafka/lds-gen.py"
+    ]
   }
 }
